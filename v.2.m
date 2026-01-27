@@ -181,7 +181,7 @@ plot([real(R_Green) real(R_Grey)+RO4O2x], [imag(R_Green) imag(R_Grey)+RO4O2y], '
 plot([RO4O2x real(R_Grey)+RO4O2x], [RO4O2y imag(R_Grey)+RO4O2y], 'Color', [0.5 0.5 0.5], 'LineWidth', 2); % Grey
 plot([0 real(R_Cyan)], [0 imag(R_Cyan)], 'c-', 'LineWidth', 2); % Cyan
 plot([real(R_Cyan) real(R_Grey)+RO4O2x], [imag(R_Cyan) imag(R_Grey)+RO4O2y], 'r-', 'LineWidth', 2); % Red
-plot([0 real(R_Cyan_Up)], [0 imag(R_Cyan_Up)], 'c:', 'LineWidth', 2); % Cyan Up
+plot([0 real(R_Cyan_Up)], [0 imag(R_Cyan_Up)], 'c-', 'LineWidth', 2); % Cyan Up
 plot([real(R_Cyan_Up) real(R_Brown)+RO4O2x], [imag(R_Cyan_Up) imag(R_Brown)+RO4O2y], 'b-', 'LineWidth', 2); % Blue
 plot([RO4O2x real(R_Brown)+RO4O2x], [RO4O2y imag(R_Brown)+RO4O2y], 'Color', [0.6 0.3 0], 'LineWidth', 2); % Brown
 
@@ -192,8 +192,8 @@ V_Grey = 1i * R_Grey * w_Grey_1;
 V_Cyan = 1i * R_Cyan * w_Cyan_1;
 V_Cyan_Up = 1i * R_Cyan_Up * w_Cyan_1;
 V_Brown = 1i * R_Brown * w_Brown_1;
-V_Red_Rel = 1i * R_Red * w_Red_1; % Adding this for completeness
-V_Blue_Rel = 1i * R_Blue * w_Blue_1; % Adding this for completeness
+V_Red_Rel = 1i * R_Red * w_Red_1; 
+V_Blue_Rel = 1i * R_Blue * w_Blue_1; 
 
 % 4. Plot Velocities
 quiver(real(R_Green), imag(R_Green), real(V_Green)/40, imag(V_Green)/40, 0, 'Color', 'g', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
@@ -201,8 +201,6 @@ quiver(real(R_Green), imag(R_Green), real(V_Yellow_Rel)/20, imag(V_Yellow_Rel)/2
 quiver(real(R_Grey)+RO4O2x, imag(R_Grey)+RO4O2y, real(V_Grey)/40, imag(V_Grey)/40, 0,'Color', [0.5 0.5 0.5], 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
 quiver(real(R_Cyan), imag(R_Cyan), real(V_Cyan)/40, imag(V_Cyan)/40, 0, 'c', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
 quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(V_Cyan_Up)/40, imag(V_Cyan_Up)/40, 0, 'c', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
-quiver(real(R_Brown)+RO4O2x, imag(R_Brown)+RO4O2y, real(V_Brown)/20, imag(V_Brown)/20, 0, 'Color', [0.6 0.3 0], 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
-% Add missing velocity vectors for Red and Blue relative
 quiver(real(R_Cyan), imag(R_Cyan), real(V_Red_Rel)/40, imag(V_Red_Rel)/40, 0, 'r', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
 quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(V_Blue_Rel)/40, imag(V_Blue_Rel)/40, 0, 'b', 'LineWidth', 1.5, 'MaxHeadSize', 0.5);
 
@@ -229,7 +227,7 @@ plot([real(R_Green_2) real(R_Grey_2)+RO4O2x], [imag(R_Green_2) imag(R_Grey_2)+RO
 plot([RO4O2x real(R_Grey_2)+RO4O2x], [RO4O2y imag(R_Grey_2)+RO4O2y], 'Color', [0.5 0.5 0.5], 'LineWidth', 2);
 plot([0 real(R_Cyan_2)], [0 imag(R_Cyan_2)], 'c-', 'LineWidth', 2);
 plot([real(R_Cyan_2) real(R_Grey_2)+RO4O2x], [imag(R_Cyan_2) imag(R_Grey_2)+RO4O2y], 'r-', 'LineWidth', 2);
-plot([0 real(R_Cyan_Up_2)], [0 imag(R_Cyan_Up_2)], 'c:', 'LineWidth', 2);
+plot([0 real(R_Cyan_Up_2)], [0 imag(R_Cyan_Up_2)], 'c-', 'LineWidth', 2);
 plot([real(R_Cyan_Up_2) real(R_Brown_2)+RO4O2x], [imag(R_Cyan_Up_2) imag(R_Brown_2)+RO4O2y], 'b-', 'LineWidth', 2);
 plot([RO4O2x real(R_Brown_2)+RO4O2x], [RO4O2y imag(R_Brown_2)+RO4O2y], 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
