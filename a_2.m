@@ -225,7 +225,7 @@ alpha_Blue_2  = (C_val*E_coef - B_coef*F_val) / (A_coef*E_coef - B_coef*D_coef);
 alpha_Brown_2 = (A_coef*F_val - C_val*D_coef) / (A_coef*E_coef - B_coef*D_coef);
 
 
-% --- DISPLAY ACCELERATION RESULTS ---
+% --- DISPLAY ACCELERATION RESULTS (Values you wanted to see) ---
 disp('======================================');
 disp('    ANGULAR ACCELERATION (rad/s^2)');
 disp('======================================');
@@ -283,20 +283,17 @@ A_Brown_2 = (1i*alpha_Brown_2*L4_Loop3 - L4_Loop3*w_Brown_2^2) * exp(1i*(q4_Brow
 L_P = 0.065; % 65 mm
 
 % --- Case 1 ---
-% Position of P (Absolute from Origin O2)
-% Note: Brown link starts at O4. So we start at RO4O2 and move along Brown link.
+% P starts from O4 (RO4O2) along Brown link
+A_P_1 = (1i * alpha_Brown_1 * L_P - L_P * w_Brown_1^2) * exp(1i * (q4_Brown_1 + offset));
+% Note: This is A_P relative to O4. Since O4 is fixed, this is absolute A_P.
+% For plotting, we start arrow at P's position
 R_P_1 = RO4O2 + L_P * exp(1i * (q4_Brown_1 + offset));
 
-% Acceleration of P
-% Since O4 is a fixed pivot (ground), absolute acceleration at P depends only on Brown link rotation.
-% A_P = (j * alpha * r - w^2 * r) * e^(j*theta)
-A_P_1 = (1i * alpha_Brown_1 * L_P - L_P * w_Brown_1^2) * exp(1i * (q4_Brown_1 + offset));
-
 % --- Case 2 ---
-R_P_2 = RO4O2 + L_P * exp(1i * (q4_Brown_2 + offset));
 A_P_2 = (1i * alpha_Brown_2 * L_P - L_P * w_Brown_2^2) * exp(1i * (q4_Brown_2 + offset));
+R_P_2 = RO4O2 + L_P * exp(1i * (q4_Brown_2 + offset));
 
-% --- Display Results ---
+% --- DISPLAY POINT P ACCELERATION ---
 disp('======================================');
 disp('   ACCELERATION AT POINT P (m/s^2)');
 disp('======================================');
@@ -341,9 +338,9 @@ quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Cyan_Up_1)/120, imag(A_Cyan_Up_1
 quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Blue_Rel_1)/80, imag(A_Blue_Rel_1)/80, 0, 'b', 'LineWidth', 2);
 quiver(real(R_Brown)+RO4O2x, imag(R_Brown)+RO4O2y, real(A_Brown_1)/80, imag(A_Brown_1)/80, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
-% Plot Point P Vector
+% Plot Point P Acceleration
 quiver(real(R_P_1), imag(R_P_1), real(A_P_1)*AccScale, imag(A_P_1)*AccScale, 0, 'm', 'LineWidth', 2);
-plot(real(R_P_1), imag(R_P_1), 'mo', 'MarkerFaceColor', 'm'); % Mark Point P
+plot(real(R_P_1), imag(R_P_1), 'mo', 'MarkerFaceColor', 'm');
 
 axis equal; grid on;
 
@@ -377,8 +374,8 @@ quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Cyan_Up_2)/140, imag(A_Cyan_
 quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Blue_Rel_2)/140, imag(A_Blue_Rel_2)/140, 0, 'b', 'LineWidth', 2);
 quiver(real(R_Brown_2)+RO4O2x, imag(R_Brown_2)+RO4O2y, real(A_Brown_2)/60, imag(A_Brown_2)/60, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
-% Plot Point P Vector
+% Plot Point P Acceleration
 quiver(real(R_P_2), imag(R_P_2), real(A_P_2)*AccScale, imag(A_P_2)*AccScale, 0, 'm', 'LineWidth', 2);
-plot(real(R_P_2), imag(R_P_2), 'mo', 'MarkerFaceColor', 'm'); % Mark Point P
+plot(real(R_P_2), imag(R_P_2), 'mo', 'MarkerFaceColor', 'm');
 
 axis equal; grid on;
