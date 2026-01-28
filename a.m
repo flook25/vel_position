@@ -25,7 +25,7 @@ q3d_global = 19.94;
 q3 = deg2rad(q3d_global) - offset;
 
 w_Yellow = -2.2; % Input Angular Velocity
-alpha_Yellow = -0.8; % Input Angular Acceleration
+alpha_Yellow = -0.8; % Input Angular Acceleration (rad/s^2)
 
 % ==========================================
 % SECTION 2: POSITION ANALYSIS
@@ -82,7 +82,11 @@ q3_Blue_2 = 2*atan((-E3_2 + sqrt(E3_2^2 - 4*D3_2*F3_2))/(2*D3_2));
 disp('======================================');
 disp('       POSITION RESULTS (Degrees)');
 disp('======================================');
-% (Display Code Skipped for brevity, same as before)
+disp('--- CASE 1 (OPEN) ---');
+disp(['  Green:  ', num2str(rad2deg(q2_L1_open)+offset_deg)]);
+disp(['  Yellow: ', num2str(q3d_global)]);
+disp(['  Grey:   ', num2str(rad2deg(q4_L1_open)+offset_deg)]);
+disp(' ');
 
 % ==========================================
 % SECTION 3: VELOCITY ANALYSIS
@@ -115,145 +119,98 @@ w_Blue_1 = (a * w_Cyan_1 * sin(q4_Brown_1 - q_in_3_1)) / (b * sin(q4_Brown_1 - q
 w_Brown_2 = (a * w_Cyan_2 * sin(q_in_3_2 - q3_Blue_2)) / (c * sin(q4_Brown_2 - q3_Blue_2));
 w_Blue_2 = (a * w_Cyan_2 * sin(q4_Brown_2 - q_in_3_2)) / (b * sin(q4_Brown_2 - q3_Blue_2));
 
-% --- DISPLAY VELOCITIES ---
 disp('======================================');
 disp('       VELOCITY RESULTS (rad/s)');
 disp('======================================');
-% (Display Code Skipped for brevity)
+disp('--- CASE 1 (OPEN) ---');
+disp(['  w_Green: ', num2str(w_Green_1)]);
+disp(['  w_Yellow (Input): ', num2str(w_Yellow)]);
+disp(['  w_Grey:  ', num2str(w_Grey_1)]);
+disp(' ');
 
 % ==========================================
 % SECTION 5: ACCELERATION ANALYSIS
 % ==========================================
-% Formula derived from slides: alpha = (C*E - B*F) / (A*E - B*D)
-% System: A*alpha1 + B*alpha2 = C
-%         D*alpha1 + E*alpha2 = F
+% Solving linear equations A*x + B*y = C, D*x + E*y = F
+% alpha_x = (C*E - B*F) / (A*E - B*D)
+% alpha_y = (A*F - C*D) / (A*E - B*D)
 
-% --- LOOP 1: Green(2) + Yellow(3) - Grey(4) = 0 ---
-% Unknowns: Green(alpha2), Grey(alpha4)
-% Input: Yellow(alpha3)
+% --- Loop 1: Green(2) + Yellow(3) - Grey(4) = 0 ---
+% Unknowns: alpha_Green (2) and alpha_Grey (4)
+% Known Input: alpha_Yellow (3) = -0.8
 a = L2_Loop1; b = L3_Loop1; c = L4_Shared;
 
 % Case 1
-% Coefficients for Green (Unknown 1) and Grey (Unknown 2)
-% Real part eq: -a*sin(th2)*alp2 + c*sin(th4)*alp4 = RHS_Real
-% Imag part eq:  a*cos(th2)*alp2 - c*cos(th4)*alp4 = RHS_Imag
-A = -a*sin(q2_L1_open); 
-B = c*sin(q4_L1_open);
-D = a*cos(q2_L1_open); 
-E = -c*cos(q4_L1_open);
+A = -a*sin(q2_L1_open); B = c*sin(q4_L1_open);
+D = a*cos(q2_L1_open);  E = -c*cos(q4_L1_open);
+% C and F are RHS (Known terms)
+C = a*w_Green_1^2*cos(q2_L1_open) + b*w_Yellow^2*cos(q3) + b*alpha_Yellow*sin(q3) - c*w_Grey_1^2*cos(q4_L1_open);
+F = a*w_Green_1^2*sin(q2_L1_open) + b*w_Yellow^2*sin(q3) - b*alpha_Yellow*cos(q3) - c*w_Grey_1^2*sin(q4_L1_open);
 
-% RHS terms (C and F in Cramer's rule context)
-% Move all w^2 and input alpha terms to RHS
-RHS_Complex = a*w_Green_1^2*exp(1i*q2_L1_open) ...
-            - (1i*b*alpha_Yellow - b*w_Yellow^2)*exp(1i*q3) ...
-            - c*w_Grey_1^2*exp(1i*q4_L1_open);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Green_1 = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Grey_1  = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Green_1 = (C*E - B*F) / (A*E - B*D);
+alpha_Grey_1  = (A*F - C*D) / (A*E - B*D);
 
 % Case 2
-A = -a*sin(q2_L1_cross); 
-B = c*sin(q4_L1_cross);
-D = a*cos(q2_L1_cross); 
-E = -c*cos(q4_L1_cross);
+A = -a*sin(q2_L1_cross); B = c*sin(q4_L1_cross);
+D = a*cos(q2_L1_cross);  E = -c*cos(q4_L1_cross);
+C = a*w_Green_2^2*cos(q2_L1_cross) + b*w_Yellow^2*cos(q3) + b*alpha_Yellow*sin(q3) - c*w_Grey_2^2*cos(q4_L1_cross);
+F = a*w_Green_2^2*sin(q2_L1_cross) + b*w_Yellow^2*sin(q3) - b*alpha_Yellow*cos(q3) - c*w_Grey_2^2*sin(q4_L1_cross);
 
-RHS_Complex = a*w_Green_2^2*exp(1i*q2_L1_cross) ...
-            - (1i*b*alpha_Yellow - b*w_Yellow^2)*exp(1i*q3) ...
-            - c*w_Grey_2^2*exp(1i*q4_L1_cross);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Green_2 = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Grey_2  = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Green_2 = (C*E - B*F) / (A*E - B*D);
+alpha_Grey_2  = (A*F - C*D) / (A*E - B*D);
 
 
-% --- LOOP 2: Cyan(2) + Red(3) - Grey(4) = 0 ---
-% Unknowns: Cyan(alpha2), Red(alpha3)
-% Input: Grey(alpha4 - Known from Loop 1)
+% --- Loop 2: Cyan(2) + Red(3) - Grey(4) = 0 ---
+% Unknowns: alpha_Cyan (2) and alpha_Red (3)
+% Known Input: alpha_Grey (4) from Loop 1
 a = L2_Loop2; b = L3_Loop2; c = L4_Shared;
 
 % Case 1
-A = -a*sin(q2_Cyan_1); 
-B = -b*sin(q3_Red_1);
-D = a*cos(q2_Cyan_1);  
-E = b*cos(q3_Red_1);
+A = -a*sin(q2_Cyan_1); B = -b*sin(q3_Red_1);
+D = a*cos(q2_Cyan_1);  E = b*cos(q3_Red_1);
+% RHS includes Grey terms (Known)
+C = a*w_Cyan_1^2*cos(q2_Cyan_1) + b*w_Red_1^2*cos(q3_Red_1) - c*w_Grey_1^2*cos(q4_L1_open) - c*alpha_Grey_1*sin(q4_L1_open);
+F = a*w_Cyan_1^2*sin(q2_Cyan_1) + b*w_Red_1^2*sin(q3_Red_1) - c*w_Grey_1^2*sin(q4_L1_open) + c*alpha_Grey_1*cos(q4_L1_open);
 
-% RHS: Move Grey terms (Known) to RHS
-% Eq: A_Cyan + A_Red = A_Grey
-% A_Grey = (j*c*alp_gr - c*w_gr^2)*e^jth_gr
-A_Grey_Vec = (1i*c*alpha_Grey_1 - c*w_Grey_1^2)*exp(1i*q4_L1_open);
-RHS_Complex = A_Grey_Vec ...
-            + a*w_Cyan_1^2*exp(1i*q2_Cyan_1) ...
-            + b*w_Red_1^2*exp(1i*q3_Red_1);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Cyan_1 = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Red_1  = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Cyan_1 = (C*E - B*F) / (A*E - B*D);
+alpha_Red_1  = (A*F - C*D) / (A*E - B*D);
 
 % Case 2
-A = -a*sin(q2_Cyan_2); 
-B = -b*sin(q3_Red_2);
-D = a*cos(q2_Cyan_2);  
-E = b*cos(q3_Red_2);
+A = -a*sin(q2_Cyan_2); B = -b*sin(q3_Red_2);
+D = a*cos(q2_Cyan_2);  E = b*cos(q3_Red_2);
+C = a*w_Cyan_2^2*cos(q2_Cyan_2) + b*w_Red_2^2*cos(q3_Red_2) - c*w_Grey_2^2*cos(q4_L1_cross) - c*alpha_Grey_2*sin(q4_L1_cross);
+F = a*w_Cyan_2^2*sin(q2_Cyan_2) + b*w_Red_2^2*sin(q3_Red_2) - c*w_Grey_2^2*sin(q4_L1_cross) + c*alpha_Grey_2*cos(q4_L1_cross);
 
-A_Grey_Vec = (1i*c*alpha_Grey_2 - c*w_Grey_2^2)*exp(1i*q4_L1_cross);
-RHS_Complex = A_Grey_Vec ...
-            + a*w_Cyan_2^2*exp(1i*q2_Cyan_2) ...
-            + b*w_Red_2^2*exp(1i*q3_Red_2);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Cyan_2 = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Red_2  = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Cyan_2 = (C*E - B*F) / (A*E - B*D);
+alpha_Red_2  = (A*F - C*D) / (A*E - B*D);
 
 
-% --- LOOP 3: Cyan(2) + Blue(3) - Brown(4) = 0 ---
-% Unknowns: Blue(alpha3), Brown(alpha4)
-% Input: Cyan(alpha2 - Known from Loop 2)
+% --- Loop 3: Cyan(2) + Blue(3) - Brown(4) = 0 ---
+% Unknowns: alpha_Blue (3) and alpha_Brown (4)
+% Known Input: alpha_Cyan (2) from Loop 2
 a = L2_Loop3; b = L3_Loop3; c = L4_Loop3;
 
 % Case 1
-% Eq: A_Cyan + A_Blue - A_Brown = 0
-% Unknowns: Blue (b), Brown (c)
-% Coeffs: Blue(+), Brown(-)
-A = -b*sin(q3_Blue_1); 
-B = c*sin(q4_Brown_1); % minus minus = plus
-D = b*cos(q3_Blue_1);  
-E = -c*cos(q4_Brown_1);
+A = -b*sin(q3_Blue_1); B = c*sin(q4_Brown_1);
+D = b*cos(q3_Blue_1);  E = -c*cos(q4_Brown_1);
+% RHS includes Cyan terms (Known)
+C = a*w_Cyan_1^2*cos(q_in_3_1) + a*alpha_Cyan_1*sin(q_in_3_1) + b*w_Blue_1^2*cos(q3_Blue_1) - c*w_Brown_1^2*cos(q4_Brown_1);
+F = a*w_Cyan_1^2*sin(q_in_3_1) - a*alpha_Cyan_1*cos(q_in_3_1) + b*w_Blue_1^2*sin(q3_Blue_1) - c*w_Brown_1^2*sin(q4_Brown_1);
 
-A_Cyan_Vec = (1i*a*alpha_Cyan_1 - a*w_Cyan_1^2)*exp(1i*q_in_3_1);
-RHS_Complex = -A_Cyan_Vec ...
-            + b*w_Blue_1^2*exp(1i*q3_Blue_1) ...
-            - c*w_Brown_1^2*exp(1i*q4_Brown_1);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Blue_1  = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Brown_1 = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Blue_1  = (C*E - B*F) / (A*E - B*D);
+alpha_Brown_1 = (A*F - C*D) / (A*E - B*D);
 
 % Case 2
-A = -b*sin(q3_Blue_2); 
-B = c*sin(q4_Brown_2);
-D = b*cos(q3_Blue_2);  
-E = -c*cos(q4_Brown_2);
+A = -b*sin(q3_Blue_2); B = c*sin(q4_Brown_2);
+D = b*cos(q3_Blue_2);  E = -c*cos(q4_Brown_2);
+C = a*w_Cyan_2^2*cos(q_in_3_2) + a*alpha_Cyan_2*sin(q_in_3_2) + b*w_Blue_2^2*cos(q3_Blue_2) - c*w_Brown_2^2*cos(q4_Brown_2);
+F = a*w_Cyan_2^2*sin(q_in_3_2) - a*alpha_Cyan_2*cos(q_in_3_2) + b*w_Blue_2^2*sin(q3_Blue_2) - c*w_Brown_2^2*sin(q4_Brown_2);
 
-A_Cyan_Vec = (1i*a*alpha_Cyan_2 - a*w_Cyan_2^2)*exp(1i*q_in_3_2);
-RHS_Complex = -A_Cyan_Vec ...
-            + b*w_Blue_2^2*exp(1i*q3_Blue_2) ...
-            - c*w_Brown_2^2*exp(1i*q4_Brown_2);
-C_val = real(RHS_Complex);
-F_val = imag(RHS_Complex);
-
-alpha_Blue_2  = (C_val*E - B*F_val) / (A*E - B*D);
-alpha_Brown_2 = (A*F_val - C_val*D) / (A*E - B*D);
+alpha_Blue_2  = (C*E - B*F) / (A*E - B*D);
+alpha_Brown_2 = (A*F - C*D) / (A*E - B*D);
 
 
-% ==========================================
-% SECTION 6: DISPLAY RESULTS
-% ==========================================
+% --- DISPLAY ACCELERATION RESULTS ---
 disp('======================================');
 disp('    ANGULAR ACCELERATION (rad/s^2)');
 disp('======================================');
@@ -275,62 +232,64 @@ disp(['  alpha_Red:    ', num2str(alpha_Red_2)]);
 disp(['  alpha_Blue:   ', num2str(alpha_Blue_2)]);
 disp(['  alpha_Brown:  ', num2str(alpha_Brown_2)]);
 
+
 % ==========================================
-% SECTION 7: VECTORS & PLOTTING
+% SECTION 6: VECTORS & PLOTTING
 % ==========================================
-% Formula: A = (j*L*alpha - L*w^2) * exp(j*theta)
-
-% --- Case 1 Vectors ---
-A_Green_1 = (1i*L2_Loop1*alpha_Green_1 - L2_Loop1*w_Green_1^2)*exp(1i*(q2_L1_open+offset));
-A_Yellow_1 = (1i*L3_Loop1*alpha_Yellow - L3_Loop1*w_Yellow^2)*exp(1i*(q3+offset));
-A_Grey_1 = (1i*L4_Shared*alpha_Grey_1 - L4_Shared*w_Grey_1^2)*exp(1i*(q4_L1_open+offset));
-A_Cyan_1 = (1i*L2_Loop2*alpha_Cyan_1 - L2_Loop2*w_Cyan_1^2)*exp(1i*(q2_Cyan_1+offset));
-A_Red_1 = (1i*L3_Loop2*alpha_Red_1 - L3_Loop2*w_Red_1^2)*exp(1i*(q3_Red_1+offset));
-A_Cyan_Up_1 = (1i*L2_Loop3*alpha_Cyan_1 - L2_Loop3*w_Cyan_1^2)*exp(1i*(q_in_3_1+offset));
-A_Blue_1 = (1i*L3_Loop3*alpha_Blue_1 - L3_Loop3*w_Blue_1^2)*exp(1i*(q3_Blue_1+offset));
-A_Brown_1 = (1i*L4_Loop3*alpha_Brown_1 - L4_Loop3*w_Brown_1^2)*exp(1i*(q4_Brown_1+offset));
-
-% --- Case 2 Vectors ---
-A_Green_2 = (1i*L2_Loop1*alpha_Green_2 - L2_Loop1*w_Green_2^2)*exp(1i*(q2_L1_cross+offset));
-A_Yellow_2 = (1i*L3_Loop1*alpha_Yellow - L3_Loop1*w_Yellow^2)*exp(1i*(q3+offset));
-A_Grey_2 = (1i*L4_Shared*alpha_Grey_2 - L4_Shared*w_Grey_2^2)*exp(1i*(q4_L1_cross+offset));
-A_Cyan_2 = (1i*L2_Loop2*alpha_Cyan_2 - L2_Loop2*w_Cyan_2^2)*exp(1i*(q2_Cyan_2+offset));
-A_Red_2 = (1i*L3_Loop2*alpha_Red_2 - L3_Loop2*w_Red_2^2)*exp(1i*(q3_Red_2+offset));
-A_Cyan_Up_2 = (1i*L2_Loop3*alpha_Cyan_2 - L2_Loop3*w_Cyan_2^2)*exp(1i*(q_in_3_2+offset));
-A_Blue_2 = (1i*L3_Loop3*alpha_Blue_2 - L3_Loop3*w_Blue_2^2)*exp(1i*(q3_Blue_2+offset));
-A_Brown_2 = (1i*L4_Loop3*alpha_Brown_2 - L4_Loop3*w_Brown_2^2)*exp(1i*(q4_Brown_2+offset));
-
+% Vector A = (j*alpha - w^2) * R_vector
 RO4O2 = L1*exp(1i*offset);
 RO4O2x = real(RO4O2); RO4O2y = imag(RO4O2);
-AccScale = 0.02; 
+Scale = 0.05;
+
+% --- Case 1 Calculation ---
+% Tangential = j*alpha*R, Normal = -w^2*R
+A_Green_1 = (1i*alpha_Green_1 - w_Green_1^2) * (L2_Loop1*exp(1i*(q2_L1_open+offset)));
+A_Yellow_1 = (1i*alpha_Yellow - w_Yellow^2) * (L3_Loop1*exp(1i*(q3+offset)));
+A_Grey_1 = (1i*alpha_Grey_1 - w_Grey_1^2) * (L4_Shared*exp(1i*(q4_L1_open+offset)));
+A_Cyan_1 = (1i*alpha_Cyan_1 - w_Cyan_1^2) * (L2_Loop2*exp(1i*(q2_Cyan_1+offset)));
+A_Red_1 = (1i*alpha_Red_1 - w_Red_1^2) * (L3_Loop2*exp(1i*(q3_Red_1+offset)));
+A_Cyan_Up_1 = (1i*alpha_Cyan_1 - w_Cyan_1^2) * (L2_Loop3*exp(1i*(q_in_3_1+offset)));
+A_Blue_1 = (1i*alpha_Blue_1 - w_Blue_1^2) * (L3_Loop3*exp(1i*(q3_Blue_1+offset)));
+A_Brown_1 = (1i*alpha_Brown_1 - w_Brown_1^2) * (L4_Loop3*exp(1i*(q4_Brown_1+offset)));
 
 % --- Plot Case 1 ---
 figure(1);
-% Position
-R_Green = L2_Loop1*exp(1i*(q2_L1_open+offset));
-R_Cyan = L2_Loop2*exp(1i*(q2_Cyan_1+offset));
-R_Cyan_Up = L2_Loop3*exp(1i*(q_in_3_1+offset));
-% Acceleration Vectors
-quiver(real(R_Green), imag(R_Green), real(A_Green_1)*AccScale, imag(A_Green_1)*AccScale, 0, 'Color', [0 0.5 0], 'LineWidth', 2);
-quiver(real(R_Green), imag(R_Green), real(A_Yellow_1)*AccScale, imag(A_Yellow_1)*AccScale, 0, 'Color', [0.8 0.8 0], 'LineWidth', 2);
-quiver(RO4O2x, RO4O2y, real(A_Grey_1)*AccScale, imag(A_Grey_1)*AccScale, 0, 'k', 'LineWidth', 2);
-quiver(real(R_Cyan), imag(R_Cyan), real(A_Cyan_1)*AccScale, imag(A_Cyan_1)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan), imag(R_Cyan), real(A_Red_1)*AccScale, imag(A_Red_1)*AccScale, 0, 'r', 'LineWidth', 2);
-quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Cyan_Up_1)*AccScale, imag(A_Cyan_Up_1)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Blue_1)*AccScale, imag(A_Blue_1)*AccScale, 0, 'b', 'LineWidth', 2);
-quiver(RO4O2x, RO4O2y, real(A_Brown_1)*AccScale, imag(A_Brown_1)*AccScale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
+% Re-plot Position for reference
+R_Green_Vec = L2_Loop1*exp(1i*(q2_L1_open+offset));
+R_Cyan_Vec = L2_Loop2*exp(1i*(q2_Cyan_1+offset));
+R_Cyan_Up_Vec = L2_Loop3*exp(1i*(q_in_3_1+offset));
+
+quiver(real(R_Green_Vec), imag(R_Green_Vec), real(A_Green_1)*Scale, imag(A_Green_1)*Scale, 0, 'Color', [0 0.5 0], 'LineWidth', 2);
+quiver(real(R_Green_Vec), imag(R_Green_Vec), real(A_Yellow_1)*Scale, imag(A_Yellow_1)*Scale, 0, 'Color', [0.8 0.8 0], 'LineWidth', 2);
+quiver(RO4O2x, RO4O2y, real(A_Grey_1)*Scale, imag(A_Grey_1)*Scale, 0, 'k', 'LineWidth', 2);
+quiver(real(R_Cyan_Vec), imag(R_Cyan_Vec), real(A_Cyan_1)*Scale, imag(A_Cyan_1)*Scale, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Vec), imag(R_Cyan_Vec), real(A_Red_1)*Scale, imag(A_Red_1)*Scale, 0, 'r', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_Vec), imag(R_Cyan_Up_Vec), real(A_Cyan_Up_1)*Scale, imag(A_Cyan_Up_1)*Scale, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_Vec), imag(R_Cyan_Up_Vec), real(A_Blue_1)*Scale, imag(A_Blue_1)*Scale, 0, 'b', 'LineWidth', 2);
+quiver(RO4O2x, RO4O2y, real(A_Brown_1)*Scale, imag(A_Brown_1)*Scale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
+
+
+% --- Case 2 Calculation ---
+A_Green_2 = (1i*alpha_Green_2 - w_Green_2^2) * (L2_Loop1*exp(1i*(q2_L1_cross+offset)));
+A_Yellow_2 = (1i*alpha_Yellow - w_Yellow^2) * (L3_Loop1*exp(1i*(q3+offset)));
+A_Grey_2 = (1i*alpha_Grey_2 - w_Grey_2^2) * (L4_Shared*exp(1i*(q4_L1_cross+offset)));
+A_Cyan_2 = (1i*alpha_Cyan_2 - w_Cyan_2^2) * (L2_Loop2*exp(1i*(q2_Cyan_2+offset)));
+A_Red_2 = (1i*alpha_Red_2 - w_Red_2^2) * (L3_Loop2*exp(1i*(q3_Red_2+offset)));
+A_Cyan_Up_2 = (1i*alpha_Cyan_2 - w_Cyan_2^2) * (L2_Loop3*exp(1i*(q_in_3_2+offset)));
+A_Blue_2 = (1i*alpha_Blue_2 - w_Blue_2^2) * (L3_Loop3*exp(1i*(q3_Blue_2+offset)));
+A_Brown_2 = (1i*alpha_Brown_2 - w_Brown_2^2) * (L4_Loop3*exp(1i*(q4_Brown_2+offset)));
 
 % --- Plot Case 2 ---
 figure(2);
-R_Green_2 = L2_Loop1*exp(1i*(q2_L1_cross+offset));
-R_Cyan_2 = L2_Loop2*exp(1i*(q2_Cyan_2+offset));
-R_Cyan_Up_2 = L2_Loop3*exp(1i*(q_in_3_2+offset));
+R_Green_Vec2 = L2_Loop1*exp(1i*(q2_L1_cross+offset));
+R_Cyan_Vec2 = L2_Loop2*exp(1i*(q2_Cyan_2+offset));
+R_Cyan_Up_Vec2 = L2_Loop3*exp(1i*(q_in_3_2+offset));
 
-quiver(real(R_Green_2), imag(R_Green_2), real(A_Green_2)*AccScale, imag(A_Green_2)*AccScale, 0, 'Color', [0 0.5 0], 'LineWidth', 2);
-quiver(real(R_Green_2), imag(R_Green_2), real(A_Yellow_2)*AccScale, imag(A_Yellow_2)*AccScale, 0, 'Color', [0.8 0.8 0], 'LineWidth', 2);
-quiver(RO4O2x, RO4O2y, real(A_Grey_2)*AccScale, imag(A_Grey_2)*AccScale, 0, 'k', 'LineWidth', 2);
-quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Cyan_2)*AccScale, imag(A_Cyan_2)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Red_2)*AccScale, imag(A_Red_2)*AccScale, 0, 'r', 'LineWidth', 2);
-quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Cyan_Up_2)*AccScale, imag(A_Cyan_Up_2)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Blue_2)*AccScale, imag(A_Blue_2)*AccScale, 0, 'b', 'LineWidth', 2);
-quiver(RO4O2x, RO4O2y, real(A_Brown_2)*AccScale, imag(A_Brown_2)*AccScale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
+quiver(real(R_Green_Vec2), imag(R_Green_Vec2), real(A_Green_2)*Scale, imag(A_Green_2)*Scale, 0, 'Color', [0 0.5 0], 'LineWidth', 2);
+quiver(real(R_Green_Vec2), imag(R_Green_Vec2), real(A_Yellow_2)*Scale, imag(A_Yellow_2)*Scale, 0, 'Color', [0.8 0.8 0], 'LineWidth', 2);
+quiver(RO4O2x, RO4O2y, real(A_Grey_2)*Scale, imag(A_Grey_2)*Scale, 0, 'k', 'LineWidth', 2);
+quiver(real(R_Cyan_Vec2), imag(R_Cyan_Vec2), real(A_Cyan_2)*Scale, imag(A_Cyan_2)*Scale, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Vec2), imag(R_Cyan_Vec2), real(A_Red_2)*Scale, imag(A_Red_2)*Scale, 0, 'r', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_Vec2), imag(R_Cyan_Up_Vec2), real(A_Cyan_Up_2)*Scale, imag(A_Cyan_Up_2)*Scale, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_Vec2), imag(R_Cyan_Up_Vec2), real(A_Blue_2)*Scale, imag(A_Blue_2)*Scale, 0, 'b', 'LineWidth', 2);
+quiver(RO4O2x, RO4O2y, real(A_Brown_2)*Scale, imag(A_Brown_2)*Scale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
