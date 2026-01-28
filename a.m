@@ -283,14 +283,14 @@ plot([real(R_Cyan_Up) real(R_Brown)+RO4O2x], [imag(R_Cyan_Up) imag(R_Brown)+RO4O
 plot([RO4O2x real(R_Brown)+RO4O2x], [RO4O2y imag(R_Brown)+RO4O2y], 'Color', [0.6 0.3 0], 'LineWidth', 2); % Brown
 
 % 2. Plot Acceleration Vectors (Quiver)
-quiver(real(R_Green), imag(R_Green), real(A_Green_1)*AccScale, imag(A_Green_1)*AccScale, 0, 'Color', 'g', 'LineWidth', 2);
-quiver(real(R_Green), imag(R_Green), real(A_Yellow_Rel_1)*AccScale, imag(A_Yellow_Rel_1)*AccScale, 0, 'Color', 'y', 'LineWidth', 2);
-quiver(real(R_Grey)+RO4O2x, imag(R_Grey)+RO4O2y, real(A_Grey_1)*AccScale, imag(A_Grey_1)*AccScale, 0, 'k', 'LineWidth', 2);
-quiver(real(R_Cyan), imag(R_Cyan), real(A_Cyan_1)*AccScale, imag(A_Cyan_1)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan), imag(R_Cyan), real(A_Red_Rel_1)*AccScale, imag(A_Red_Rel_1)*AccScale, 0, 'r', 'LineWidth', 2);
-quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Cyan_Up_1)*AccScale, imag(A_Cyan_Up_1)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Blue_Rel_1)*AccScale, imag(A_Blue_Rel_1)*AccScale, 0, 'b', 'LineWidth', 2);
-quiver(real(R_Brown)+RO4O2x, imag(R_Brown)+RO4O2y, real(A_Brown_1)*AccScale, imag(A_Brown_1)*AccScale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
+quiver(real(R_Green), imag(R_Green), real(A_Green_1)/120, imag(A_Green_1)/120, 0, 'Color', 'g', 'LineWidth', 2);
+quiver(real(R_Green), imag(R_Green), real(A_Yellow_Rel_1)/20, imag(A_Yellow_Rel_1)/20, 0, 'Color', 'y', 'LineWidth', 2);
+quiver(real(R_Grey)+RO4O2x, imag(R_Grey)+RO4O2y, real(A_Grey_1)/100, imag(A_Grey_1)/100, 0, 'Color',[0.5 0.5 0.5], 'LineWidth', 2);
+quiver(real(R_Cyan), imag(R_Cyan), real(A_Cyan_1)/80, imag(A_Cyan_1)/80, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan), imag(R_Cyan), real(A_Red_Rel_1)/40, imag(A_Red_Rel_1)/40, 0, 'r', 'LineWidth', 2);
+quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Cyan_Up_1)/120, imag(A_Cyan_Up_1)/120, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Up), imag(R_Cyan_Up), real(A_Blue_Rel_1)/80, imag(A_Blue_Rel_1)/80, 0, 'b', 'LineWidth', 2);
+quiver(real(R_Brown)+RO4O2x, imag(R_Brown)+RO4O2y, real(A_Brown_1)/80, imag(A_Brown_1)/80, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
 axis equal; grid on;
 
@@ -315,13 +315,13 @@ plot([real(R_Cyan_Up_2) real(R_Brown_2)+RO4O2x], [imag(R_Cyan_Up_2) imag(R_Brown
 plot([RO4O2x real(R_Brown_2)+RO4O2x], [RO4O2y imag(R_Brown_2)+RO4O2y], 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
 % 2. Plot Acceleration Vectors (Quiver)
-quiver(real(R_Green_2), imag(R_Green_2), real(A_Green_2)*AccScale, imag(A_Green_2)*AccScale, 0, 'g', 'LineWidth', 2);
-quiver(real(R_Green_2), imag(R_Green_2), real(A_Yellow_Rel_2)*AccScale, imag(A_Yellow_Rel_2)*AccScale, 0, 'y', 'LineWidth', 2);
-quiver(real(R_Grey_2)+RO4O2x, imag(R_Grey_2)+RO4O2y, real(A_Grey_2)*AccScale, imag(A_Grey_2)*AccScale, 0, 'k', 'LineWidth', 2);
-quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Cyan_2)*AccScale, imag(A_Cyan_2)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Red_Rel_2)*AccScale, imag(A_Red_Rel_2)*AccScale, 0, 'r', 'LineWidth', 2);
-quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Cyan_Up_2)*AccScale, imag(A_Cyan_Up_2)*AccScale, 0, 'c', 'LineWidth', 2);
-quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Blue_Rel_2)*AccScale, imag(A_Blue_Rel_2)*AccScale, 0, 'b', 'LineWidth', 2);
-quiver(real(R_Brown_2)+RO4O2x, imag(R_Brown_2)+RO4O2y, real(A_Brown_2)*AccScale, imag(A_Brown_2)*AccScale, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
+quiver(real(R_Green_2), imag(R_Green_2), real(A_Green_2)/100, imag(A_Green_2)/100, 0, 'g', 'LineWidth', 2);
+quiver(real(R_Green_2), imag(R_Green_2), real(A_Yellow_Rel_2)/20, imag(A_Yellow_Rel_2)/20, 0, 'y', 'LineWidth', 2);
+quiver(real(R_Grey_2)+RO4O2x, imag(R_Grey_2)+RO4O2y, real(A_Grey_2)/120, imag(A_Grey_2)/120, 0, 'Color',[0.5 0.5 0.5], 'LineWidth', 2);
+quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Cyan_2)/100, imag(A_Cyan_2)/100, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_2), imag(R_Cyan_2), real(A_Red_Rel_2)/20, imag(A_Red_Rel_2)/20, 0, 'r', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Cyan_Up_2)/140, imag(A_Cyan_Up_2)/140, 0, 'c', 'LineWidth', 2);
+quiver(real(R_Cyan_Up_2), imag(R_Cyan_Up_2), real(A_Blue_Rel_2)/140, imag(A_Blue_Rel_2)/140, 0, 'b', 'LineWidth', 2);
+quiver(real(R_Brown_2)+RO4O2x, imag(R_Brown_2)+RO4O2y, real(A_Brown_2)/60, imag(A_Brown_2)/60, 0, 'Color', [0.6 0.3 0], 'LineWidth', 2);
 
 axis equal; grid on;
